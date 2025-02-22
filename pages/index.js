@@ -295,21 +295,22 @@ const categoryColors = [
   const fetchTodaysPuzzle = async () => {
     setIsLoading(true);
     try {
+      // Convert current time to UTC+2 (Israel timezone)
       const now = new Date();
-      // Define UTC day boundaries for a universal daily puzzle
-      const startOfDay = new Date(Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate(),
-        0, 0, 0
-      ));
-      const endOfDay = new Date(Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate(),
-        23, 59, 59, 999
-      ));
-      console.log("UTC day boundaries:", startOfDay, endOfDay);
+      const israelOffset = 2 * 60; // UTC+2 offset in minutes
+      const userOffset = now.getTimezoneOffset();
+      const totalOffsetMs = (israelOffset + userOffset) * 60 * 1000;
+      
+      const israelTime = new Date(now.getTime() + totalOffsetMs);
+      
+      // Set to start and end of day in Israel time
+      const startOfDay = new Date(israelTime);
+      startOfDay.setHours(0, 0, 0, 0);
+      
+      const endOfDay = new Date(israelTime);
+      endOfDay.setHours(23, 59, 59, 999);
+  
+      console.log("Querying for puzzles between:", startOfDay, "and", endOfDay);
   
       const puzzlesRef = collection(db, "puzzles");
       let querySnapshot = await getDocs(
@@ -317,22 +318,22 @@ const categoryColors = [
       );
       
       if (querySnapshot.empty) {
-        console.log("No puzzle found for today, defaulting to level 1 puzzle");
-        querySnapshot = await getDocs(query(puzzlesRef, limit(1)));
+        console.log("No puzzle for today, getting first puzzle");
+        querySnapshot = await getDocs(
+          query(puzzlesRef, limit(1))
+        );
       }
       
       if (!querySnapshot.empty) {
         const puzzleData = querySnapshot.docs[0].data();
-        console.log("Puzzle chosen:", puzzleData);
-        // Optionally, if your puzzleData has a level property, you could log:
-        // console.log("Puzzle level:", puzzleData.level);
-        setPuzzleId(puzzleData.id);
+        console.log("Found puzzle data:", puzzleData);
+        setPuzzleId(puzzleData.id); // Set the puzzle ID
         setCategories(puzzleData.categories);
         
         const allImages = puzzleData.categories.flatMap((cat) => cat.items);
         setShuffledImages(shuffleArray([...allImages]));
       } else {
-        console.log("No puzzles found in Firestore at all.");
+        console.log("No puzzles found at all");
         setMessage("No puzzles available");
       }
     } catch (error) {
