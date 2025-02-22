@@ -7,6 +7,8 @@ import { db } from '../firebase';
 import { collection, query, where, getDocs, limit  } from 'firebase/firestore';
 
 const ZoomedImageModal = ({ image, onClose }) => {
+  const [isLabelVisible, setIsLabelVisible] = useState(false);
+
   return (
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -20,8 +22,20 @@ const ZoomedImageModal = ({ image, onClose }) => {
             className="max-w-full max-h-full object-contain"
           />
         </div>
-        <div className="absolute bottom-0 left-0 right-0 text-center text-white bg-black bg-opacity-50 py-2">
-          {image.label}
+        <div className="absolute bottom-0 left-0 right-0 text-center bg-black bg-opacity-50 py-2">
+          {isLabelVisible ? (
+            <span className="text-white">{image.label}</span>
+          ) : (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsLabelVisible(true);
+              }}
+              className="text-white hover:text-gray-200 font-medium"
+            >
+              Reveal Word
+            </button>
+          )}
         </div>
       </div>
     </div>
