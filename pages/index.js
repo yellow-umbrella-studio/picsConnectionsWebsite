@@ -295,11 +295,26 @@ const categoryColors = [
   const fetchTodaysPuzzle = async () => {
     setIsLoading(true);
     try {
-      const today = new Date();
-      console.log("Today's date object:", today);
-  
-      const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-      const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+      const now = new Date();
+      // Convert local time to UTC
+      const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+      // Convert UTC to Israel time (UTC+2)
+      const israelTime = new Date(utcTime + 2 * 60 * 60 * 1000);
+      console.log("Israel time:", israelTime);
+      
+      // Get the start and end of the day in Israel time
+      const startOfDay = new Date(
+        israelTime.getFullYear(),
+        israelTime.getMonth(),
+        israelTime.getDate(),
+        0, 0, 0
+      );
+      const endOfDay = new Date(
+        israelTime.getFullYear(),
+        israelTime.getMonth(),
+        israelTime.getDate(),
+        23, 59, 59, 999
+      );
       
       const puzzlesRef = collection(db, "puzzles");
       let querySnapshot = await getDocs(
