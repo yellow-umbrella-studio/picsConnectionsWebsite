@@ -76,12 +76,47 @@ const HowToPlayModal = ({ onClose }) => {
   );
 };
 
-const StatsModal = ({ stats, onClose }) => {
+const StatsModal = ({ stats, onClose, solvedCategories, categoryColors, categories }) => {
+  const [shareClicked, setShareClicked] = useState(false);
+
   const calculateTime = () => {
     const duration = stats.timeFinished - stats.timeStarted;
     const minutes = Math.floor(duration / 60000);
     const seconds = Math.floor((duration % 60000) / 1000);
     return `${minutes}m ${seconds}s`;
+  };
+
+  // Move generateEmojiGrid inside StatsModal
+  const generateEmojiGrid = () => {
+    const colorEmojis = {
+      "bg-yellow-200": "🟨",
+      "bg-green-200": "🟩", 
+      "bg-blue-200": "🟦",
+      "bg-purple-200": "🟪"
+    };
+  
+    // Create a grid where each row represents how the user solved the categories
+    const rows = solvedCategories.map((categoryName, index) => {
+      const category = categories.find(c => c.name === categoryName);
+      if (!category) return "";
+      
+      return colorEmojis[categoryColors[index]].repeat(4);
+    });
+  
+    // Join rows with newlines to create the grid
+    const emojiGrid = rows.join('\n');
+  
+    // Return the formatted string including the puzzle number and attempts
+    return `Pictures Connections #${stats.puzzleId}\n\n${emojiGrid}\n\n${stats.attempts} tries`;
+  };
+
+  const handleShareClick = () => {
+    const resultText = generateEmojiGrid();
+    navigator.clipboard.writeText(resultText)
+      .then(() => {
+        setShareClicked(true);
+        setTimeout(() => setShareClicked(false), 2000);
+      });
   };
 
   return (
@@ -110,6 +145,24 @@ const StatsModal = ({ stats, onClose }) => {
             </div>
           </div>
 
+        
+
+          {/* <div className="bg-gray-100 p-4 rounded-lg">
+            <div className="text-center mb-2 font-medium">Your Results</div>
+            <div className="grid grid-cols-4 gap-1 mb-3">
+              {solvedCategories.map((_, index) => (
+                <div key={index} className={`aspect-square ${categoryColors[index]} rounded-sm`} />
+              ))}
+            </div>
+            <button
+              onClick={handleShareClick}
+              className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm font-medium transition-colors"
+            >
+              {shareClicked ? "Copied!" : "Copy Results"}
+            </button>
+          </div> */}
+
+          {/* Rest of modal content */}
           <button
             onClick={onClose}
             className="w-full py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors"
@@ -328,6 +381,22 @@ useEffect(() => {
       });
   };
 
+  const generateEmojiGrid = () => {
+    const colorEmojis = {
+      "bg-yellow-200": "🟨",
+      "bg-green-200": "🟩",
+      "bg-blue-200": "🟦",
+      "bg-purple-200": "🟪"
+    };
+  
+    let emojiString = solvedCategories.map((_, index) => {
+      return `${colorEmojis[categoryColors[index]]}`.repeat(4);
+    }).join('');
+  
+    // Add the puzzle number and attempts
+    return `Pictures Connections #${puzzleId}\n${emojiString}\n${stats.attempts} tries`;
+  };
+
 
   const handleImageLongPress = (image) => {
     setZoomedImage(image);
@@ -486,11 +555,14 @@ useEffect(() => {
     Next puzzle in: {nextGameTime}
   </p>
   {stats.showStats && (
-      <StatsModal
-        stats={stats}
-        onClose={() => setStats(prev => ({ ...prev, showStats: false }))}
-      />
-    )}
+  <StatsModal
+    stats={{...stats, puzzleId}}
+    solvedCategories={solvedCategories}
+    categoryColors={categoryColors}
+    categories={categories} // Add this line
+    onClose={() => setStats(prev => ({ ...prev, showStats: false }))}
+  />
+)}
 </div>
   
         {isLoading ? (
