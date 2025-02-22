@@ -7,21 +7,21 @@ export default function Document() {
         {/* Basic Meta Tags */}
         <meta charSet="utf-8" />
         <meta name="description" content="Play Pictures Connections, a daily puzzle game where you group related pictures together. Find four groups of four related images in this challenging and fun daily puzzle." />
-        <meta name="keywords" content="pictures connections, daily puzzle, picture grouping game, image puzzle, daily game, picture connections game" />
+        <meta name="keywords" content="pictures connections, daily puzzle, picture grouping game, image puzzle, daily game, picture connections game, pics connections, nyt connections" />
         <meta name="author" content="Your Name" />
         
         {/* Open Graph / Social Media */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Pictures Connections - Daily Picture Grouping Puzzle" />
         <meta property="og:description" content="Find four groups of four related pictures in this daily puzzle game. New challenge every day!" />
-        <meta property="og:image" content="https://yourdomain.com/og-image.jpg" />
-        <meta property="og:url" content="https://yourdomain.com" />
+        <meta property="og:image" content="https://picsconnections.com/og-image.jpg" />
+        <meta property="og:url" content="https://picsconnections.com" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Pictures Connections - Daily Picture Grouping Puzzle" />
         <meta name="twitter:description" content="Find four groups of four related pictures in this daily puzzle game. New challenge every day!" />
-        <meta name="twitter:image" content="https://yourdomain.com/twitter-card.jpg" />
+        <meta name="twitter:image" content="https://picsconnections.com/twitter-card.jpg" />
 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -38,7 +38,7 @@ export default function Document() {
               "@type": "WebApplication",
               "name": "Pictures Connections",
               "description": "A daily picture grouping puzzle game",
-              "url": "https://yourdomain.com",
+              "url": "https://picsconnections.com",
               "applicationCategory": "GameApplication",
               "genre": "Puzzle",
               "operatingSystem": "Web",
